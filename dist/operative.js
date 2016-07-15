@@ -451,12 +451,15 @@
 
 				if (deferred && deferredAction) {
 					deferred[deferredAction](data.result.args[0]);
+					delete this.deferreds[data.token];
 				} else if (callback) {
 					callback.apply(this, data.result.args);
 				} else if (deferred) {
 					// Resolve promise even if result was given
 					// via callback within the worker:
 					deferred.fulfil(data.result.args[0]);
+
+					delete this.deferreds[data.token];
 				}
 
 				break;
@@ -760,7 +763,7 @@ function workerBoilerScript() {
 		if (this.dependencies.length) {
 			documentContent += '\n<script src="' + this.dependencies.join('"><\/script><script src="') + '"><\/script>';
 		}
-		
+
 		// Place <script> at bottom to tell parent-page when dependencies are loaded:
 		iDoc.write(
 			documentContent +
@@ -785,6 +788,7 @@ function workerBoilerScript() {
 				cb.apply(self, arguments);
 			} else if (df) {
 				df.fulfil(result);
+				delete this.deferreds[data.token];
 			}
 		}, deferred);
 	};
