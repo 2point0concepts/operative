@@ -72,7 +72,7 @@
 		if (this.dependencies.length) {
 			documentContent += '\n<script src="' + this.dependencies.join('"><\/script><script src="') + '"><\/script>';
 		}
-		
+
 		// Place <script> at bottom to tell parent-page when dependencies are loaded:
 		iDoc.write(
 			documentContent +
@@ -97,6 +97,7 @@
 				cb.apply(self, arguments);
 			} else if (df) {
 				df.fulfil(result);
+				delete this.deferreds[data.token];
 			}
 		}, deferred);
 	};

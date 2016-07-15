@@ -95,12 +95,15 @@
 
 				if (deferred && deferredAction) {
 					deferred[deferredAction](data.result.args[0]);
+					delete this.deferreds[data.token];
 				} else if (callback) {
 					callback.apply(this, data.result.args);
 				} else if (deferred) {
 					// Resolve promise even if result was given
 					// via callback within the worker:
 					deferred.fulfil(data.result.args[0]);
+
+					delete this.deferreds[data.token];
 				}
 
 				break;
